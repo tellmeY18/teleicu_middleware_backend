@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:17
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./.env
     volumes:
@@ -9,11 +9,11 @@ services:
 
   redis:
     image: redis:7.2
-    restart: always
+    restart: unless-stopped
 
   # rtsptoweb:
   stream-server:
-    restart: always
+    restart: unless-stopped
     image: ghcr.io/deepch/rtsptoweb:latest
     volumes:
       - ./RtspConfig.json:/config/config.json
@@ -23,7 +23,7 @@ services:
 
   # teleicu-middleware
   teleicu-middleware:
-    restart: always
+    restart: unless-stopped
     image: ghcr.io/10bedicu/teleicu_gateway:latest
     command: ["sh", "-c", "/app/start-backend.sh"]
     depends_on:
@@ -36,7 +36,7 @@ services:
       - "8090:8090"
 
   celery:
-    restart: always
+    restart: unless-stopped
     image: ghcr.io/10bedicu/teleicu_gateway:latest
     command: ["sh", "-c", "/app/start-celery.sh"]
     env_file:
@@ -48,7 +48,7 @@ services:
 
   # proxies requests to internal services
   reverse-proxy:
-    restart: always
+    restart: unless-stopped
     image: ghcr.io/10bedicu/teleicu_gateway_nginx:latest
     depends_on:
       - teleicu-middleware
